@@ -82,6 +82,10 @@ project.ext.react = [
 
 apply from: "../../node_modules/react-native/react.gradle"
 
+// project.ext.vectoricons = [
+//     iconFontNames: [ 'MaterialIcons.ttf', 'EvilIcons.ttf' ] // Name of the font files you want to copy
+// ]
+// apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 /**
  * Set this to true to create two separate APKs instead of one:
  *   - An APK that only works on ARM devices
@@ -179,8 +183,16 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-vector-icons')
+    implementation project(':@react-native-community_viewpager')
+    implementation project(':react-native-firebase')
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.facebook.react:react-native:+"  // From node_modules
+    implementation "com.google.android.gms:play-services-base:16.1.0"
+    implementation "com.google.firebase:firebase-core:16.0.9"
+    implementation project(':react-native-firebase')
+    implementation "com.google.firebase:firebase-auth:17.0.0"
+
 
     if (enableHermes) {
         def hermesPath = "../../node_modules/hermes-engine/android/";
@@ -198,4 +210,14 @@ task copyDownloadableDepsToLibs(type: Copy) {
     into 'libs'
 }
 
+buildscript {
+    repositories {
+        google()  // <-- Check this line exists and is above jcenter
+        jcenter()
+        // ...
+    }
+    // ...
+}
+
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+apply plugin: 'com.google.gms.google-services'
