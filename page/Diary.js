@@ -1,9 +1,60 @@
 import React, {Component} from 'react';
 import {StyleSheet, View, Text, Image, TouchableOpacity} from 'react-native';
+import {
+  GoogleSignin,
+  GoogleSigninButton,
+  statusCodes,
+} from '@react-native-community/google-signin';
 
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 export default class Login extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      userInfo: {},
+    };
+  }
+
+  componentDidMount() {
+    console.log('dismount');
+    GoogleSignin.configure({
+      webClientId:
+        '112211642588-rgqd26j70ug1ao63dsv5dmgkrqk8vt2g.apps.googleusercontent.com',
+      androidClientId:
+        '112211642588-pn12lfs0ufmb3ko04qta65br61bqco0g.apps.googleusercontent.com',
+      // iosClientId: Config.IOS_CLIENT_ID,
+      offlineAccess: true,
+    });
+  }
+
+  signIn = async () => {
+    console.log('okokdfdfdokokokosdsdsds');
+    try {
+      await GoogleSignin.hasPlayServices();
+      console.log('okokdfdffssddsdokokoko');
+      const userInfo = await GoogleSignin.signIn();
+      console.log('okokdfdfdokokoko');
+      this.setState({userInfo});
+      console.log('okokokokoko', this.userInfo);
+    } catch (error) {
+      console.log(error);
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        console.log('1');
+        // user cancelled the login flow
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        console.log('2');
+        // operation (e.g. sign in) is in progress already
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        console.log('3');
+        // play services not available or outdated
+      } else {
+        // some other error happened
+      }
+    }
+  };
+
   login = () => {
     this.props.navigation.navigate('Login');
   };
@@ -16,7 +67,7 @@ export default class Login extends Component {
             source={require('../img/notebook.png')}
           />
         </View>
-        <TouchableOpacity style={styles.boxborder} onPress={this.login}>
+        {/* <TouchableOpacity style={styles.boxborder} onPress={this.login}>
           <View style={styles.border}>
             <Image
               style={styles.iconGoogle}
@@ -26,7 +77,15 @@ export default class Login extends Component {
               <Text style={styles.text}>SIGN IN/UP WITH GOOGLE</Text>
             </View>
           </View>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
+        <View style={styles.boxborder}>
+          <GoogleSigninButton
+            style={{width: '80%', height: 48}}
+            size={GoogleSigninButton.Size.Wide}
+            color={GoogleSigninButton.Color.Dark}
+            onPress={this.signIn}
+          />
+        </View>
       </View>
     );
   }
