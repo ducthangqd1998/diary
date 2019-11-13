@@ -16,15 +16,13 @@ import {
   Platform,
 } from 'react-native';
 
-export default class NoteDetail extends Component {
+export default class NewNote extends Component {
   constructor(props) {
     super(props);
-    this.navigation = this.props.navigation;
-    const {note} = this.navigation.state.params;
     this.state = {
-      title: note.title,
-      content: note.content,
-      date: new Date(note.timeCreate),
+      title: '',
+      content: '',
+      date: new Date('2020-06-12T14:42:42'),
       color: '#F1C40F',
       mode: 'date',
       show: false,
@@ -64,7 +62,7 @@ export default class NoteDetail extends Component {
   }
 
   static navigationOptions = ({navigation}) => ({
-    title: 'Note Detail',
+    title: 'New Note',
     headerTitleStyle: {
       fontWeight: 'bold',
       justifyContent: 'center',

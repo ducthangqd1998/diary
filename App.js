@@ -6,38 +6,46 @@ import {createAppContainer} from 'react-navigation';
 import Home from './page/Home';
 import Login from './page/Login';
 import Loading from './page/Loading';
+import NewNote from './page/NewNote';
 import Diary from './page/Diary';
 
-const StackNavigator = createStackNavigator({
-  Loading: {
-    screen: Loading,
-    navigationOptions: {
-      header: null,
+const StackNavigator = createStackNavigator(
+  {
+    Loading: {
+      screen: Home,
+      navigationOptions: {
+        header: null,
+      },
+    },
+    Diary: {
+      screen: Diary,
+      navigationOptions: {
+        header: null,
+      },
+    },
+    Login: {
+      screen: Login,
+      navigationOptions: {
+        header: null,
+      },
+    },
+    Home: {
+      screen: Home,
+      navigationOptions: {
+        header: null,
+      },
+    },
+    NoteDetail: {
+      screen: NoteDetail,
+      navigationOptions: {},
+    },
+    NewNote: {
+      screen: NewNote,
+      navigationOptions: {},
     },
   },
-  Diary: {
-    screen: Diary,
-    navigationOptions: {
-      header: null,
-    },
-  },
-  Login: {
-    screen: Login,
-    navigationOptions: {
-      header: null,
-    },
-  },
-  Home: {
-    screen: Home,
-    navigationOptions: {
-      header: null,
-    },
-  },
-  NoteDetail: {
-    screen: NoteDetail,
-    navigationOptions: {},
-  },
-});
+  {headerLayoutPreset: 'center'},
+);
 export default createAppContainer(StackNavigator);
 
 // import React from 'react';

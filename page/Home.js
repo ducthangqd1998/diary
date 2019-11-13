@@ -11,6 +11,7 @@ import {
   TextInput,
   Image,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 
 export default class Home extends Component {
@@ -39,7 +40,7 @@ export default class Home extends Component {
               },
             );
             txn.executeSql(
-              'CREATE TABLE IF NOT EXISTS diaryGroup(id INTEGER PRIMARY KEY AUTOINCREMENT, title VARCHAR(100), content VARCHAR(1000), timeCreate TIME, color VARCHAR(1000))',
+              'CREATE TABLE IF NOT EXISTS diaryGroup(id INTEGER PRIMARY KEY AUTOINCREMENT, title VARCHAR(100), content VARCHAR(1000), timeCreate DATETIME, color VARCHAR(1000))',
               [],
               (tss, results) => {
                 console.log('create success', results);
@@ -52,7 +53,6 @@ export default class Home extends Component {
     db.transaction(function(tx) {
       tx.executeSql('SELECT * FROM diaryGroup', [], (tx, results) => {
         var temp = [];
-        console.log(results.rows.length);
         for (let i = 0; i < results.rows.length; i++) {
           temp.push(results.rows.item(i));
         }
@@ -65,7 +65,67 @@ export default class Home extends Component {
         }
       });
     });
+
+    // db.transaction(function(tx) {
+    //   tx.executeSql(
+    //     'INSERT INTO diaryGroup (title, content, timeCreate, color) VALUES (?,?,?,?)',
+    //     ['The first day', 'Sleep 12 hours', '1998-11-20', '#ABC'],
+    //     (tx, results) => {
+    //       console.log('add success');
+    //     },
+    //   );
+    // });
   }
+
+  onDelete(id) {
+    db.transaction(tx => {
+      tx.executeSql(
+        'DELETE FROM  diaryGroup where id=?',
+        [id],
+        (tx, results) => {
+          if (results.rowsAffected > 0) {
+            Alert.alert(
+              'Success',
+              'Note deleted successfully!',
+              [
+                {
+                  text: 'Ok',
+                  onPress: () => {
+                    return db.transaction(tx => {
+                      tx.executeSql(
+                        'SELECT * FROM diaryGroup',
+                        [],
+                        (tx, results) => {
+                          var temp = [];
+                          for (let i = 0; i < results.rows.length; ++i) {
+                            temp.push(results.rows.item(i));
+                          }
+                          this.setState({
+                            records: temp,
+                          });
+                        },
+                      );
+                    });
+                  },
+                },
+              ],
+              {cancelable: false},
+            );
+          } else {
+            Alert.alert('Failed', 'Failed to delete note!');
+          }
+        },
+      );
+    });
+  }
+
+  addNewNote = () => {
+    this.props.navigation.navigate('NewNote');
+  };
+
+  nodeDetail = note => {
+    this.props.navigation.navigate('NoteDetail', {note});
+  };
 
   render() {
     return (
@@ -74,7 +134,14 @@ export default class Home extends Component {
           data={this.state.records}
           renderItem={({item}) => {
             return (
-              <TouchableOpacity style={styles.boxborder}>
+              <TouchableOpacity
+                style={styles.boxborder}
+                onPress={() => {
+                  this.nodeDetail(item);
+                }}
+                onLongPress={() => {
+                  this.onDelete(item.id);
+                }}>
                 <View style={[styles.border, {backgroundColor: item.color}]}>
                   <Text style={styles.titleText}>{item.title}</Text>
                   <Text style={styles.contentText}>{item.content}</Text>
@@ -85,7 +152,7 @@ export default class Home extends Component {
           keyExtractor={item => item.id.toString()}
         />
         <View style={styles.newNote}>
-          <TouchableOpacity onPress={() => this.addmoreWord()}>
+          <TouchableOpacity onPress={() => this.addNewNote()}>
             <Image
               style={styles.plusButton}
               source={require('../img/pencil.png')}
